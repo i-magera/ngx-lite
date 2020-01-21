@@ -63,16 +63,18 @@ export class NgxInputTagComponent implements ControlValueAccessor {
     this.onTouched();
   }
 
-  @ViewChild('inputElement', { static: false }) inputElement: ElementRef;
+  @ViewChild('inputElement', { static: false }) inputElement: ElementRef<HTMLInputElement>;
   @Input() tagSuggestions: string[] = [];
   @Input() maxTagLength = 25;
   @Input() maxNumberOfTags = 1000;
+  @Input() suggestionOnFocus = false;
   @Output() readonly textChange = new EventEmitter<string>();
 
   private _value: string[] = [];
   private prevTagInput = '';
   private currentNumberOfTags = 0;
   private tagError: { message: string } = null;
+  public focused = false;
 
   constructor(
     @Inject(NGX_INPUT_TAG_TAG_FORMATTER) private tagFormatter: TagFormatter
@@ -81,6 +83,10 @@ export class NgxInputTagComponent implements ControlValueAccessor {
   onChange = (_value: string[]) => {};
 
   onTouched = () => {};
+
+  onBlur(e) {
+    this.focused = false;
+  }
 
   registerOnChange(fn: (value: string[]) => void) {
     this.onChange = fn;
@@ -203,6 +209,7 @@ export class NgxInputTagComponent implements ControlValueAccessor {
   }
 
   focus() {
+    this.focused = true;
     this.inputElement.nativeElement.focus();
   }
 
